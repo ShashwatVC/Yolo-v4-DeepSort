@@ -204,8 +204,8 @@ def main(save=False, info=False, count_objects=False):
             # print(objx, " ",objy)
             # if((obj_x_mid==frame_x_mid and obj_y_mid==frame_x_mid)):
             # if(obj_x_mid==213 and obj_y_mid==213):
-            cls = input("Enter Class : ")
-            i_d = input("Enter ID : ")
+            # cls = input("Enter Class : ")
+            # i_d = input("Enter ID : ")
 
             if(obj_x_mid>300 or obj_x_mid<339 and obj_y_mid>220 or obj_y_mid<254):
                 print(obj_x_mid, " Heckail ",obj_y_mid)
