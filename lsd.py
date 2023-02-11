@@ -24,7 +24,7 @@ from deep_sort.detection import Detection
 from deep_sort.tracker import Tracker
 from tools import generate_detections as gdet
 
-def main(save=False, info=False, count_objects=False):
+def main(save=False, info=True, count_objects=False):
     # Definition of the parameters
     max_cosine_distance = 0.4
     nn_budget = None
@@ -44,10 +44,6 @@ def main(save=False, info=False, count_objects=False):
     session = InteractiveSession(config=config)
     STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config()
     input_size = 416
-    frame_x_min = 0
-    frame_y_min = 0
-    frame_x_mid = input_size/2
-    frame_y_mid = input_size/2
     video_path = 0 # webcam
     # video_path = 'D:/ProJects/MAJOR/Yolo-v4-DeepSort/data/video/cars.mp4' # webcam
 
@@ -130,7 +126,7 @@ def main(save=False, info=False, count_objects=False):
         # allowed_classes = list(class_names.values())
         
         # custom allowed classes (uncomment line below to customize tracker for only people)
-        allowed_classes = ['clock','car', 'cell phone']
+        allowed_classes = ['person', 'car', 'cell phone']
 
         # loop through objects and use class index to get class name, allow only classes in allowed_classes list
         names = []
@@ -172,8 +168,6 @@ def main(save=False, info=False, count_objects=False):
         # Call the tracker
         tracker.predict()
         tracker.update(detections)
-        cv2.rectangle(frame, (300,220), (339,254), (255,0,0), 2)
-        
 
         # update tracks
         for track in tracker.tracks:
@@ -185,35 +179,13 @@ def main(save=False, info=False, count_objects=False):
             # draw bbox on screen
             color = colors[int(track.track_id) % len(colors)]
             color = [i * 255 for i in color]
-
             cv2.rectangle(frame, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), color, 2)
-            # cv2.rectangle(frame, (323,327), (238,242), (255,0,0), 2)
-
-
             cv2.rectangle(frame, (int(bbox[0]), int(bbox[1]-30)), (int(bbox[0])+(len(class_name)+len(str(track.track_id)))*17, int(bbox[1])), color, -1)
             cv2.putText(frame, class_name + "-" + str(track.track_id),(int(bbox[0]), int(bbox[1]-10)),0, 0.75, (255,255,255),2)
 
             # if enable info flag then print details about each track
-            # if info:
-            #     print("Tracker ID: {}, Class: {},  BBox Coords (xmin, ymin, xmax, ymax): {}".format(str(track.track_id), class_name, (int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3]))))
-            obj_x_mid = int((bbox[2])-(bbox[0]))/2
-            obj_y_mid = int((bbox[3])-(bbox[1]))/2
-
-            # objx = int((bbox[2])-(bbox[0]))
-            # objy = int((bbox[3])-(bbox[1]))
-            # print(objx, " ",objy)
-            # if((obj_x_mid==frame_x_mid and obj_y_mid==frame_x_mid)):
-            # if(obj_x_mid==213 and obj_y_mid==213):
-            cls = input("Enter Class : ")
-            i_d = input("Enter ID : ")
-
-            if(obj_x_mid>300 or obj_x_mid<339 and obj_y_mid>220 or obj_y_mid<254):
-                print(obj_x_mid, " Heckail ",obj_y_mid)
-
-
-                # print("Tracker ID: {}, Class: {},  BBox Coords (xmin, ymin, xmax, ymax): {}".format(str(track.track_id), class_name, (int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3]))))
-                # print("a")
-                
+            if info:
+                print("Tracker ID: {}, Class: {},  BBox Coords (xmin, ymin, xmax, ymax): {}".format(str(track.track_id), class_name, (int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3]))))
 
         # calculate frames per second of running detections
         # fps = 1.0 / (time.time() - start_time)
